@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use File::Find::Rule;
 use File::Monitor;
+use Cwd;
 use base 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors( 
 qw(
@@ -20,8 +21,9 @@ sub new {
     my $class = shift;
     my $self = {@_};
     bless $self, $class;
+    my $pwd=getcwd;
     my %w_list = 
-        map{$_ => 1}
+        map{$pwd.'/'.$_ => 1}
         File::Find::Rule
             ->file()
             ->name($self->name)
@@ -34,11 +36,14 @@ sub new {
 
 sub check {
     my $self = shift;
+    my $pwd=getcwd;
     my $w_list=$self->watch_list;
-    my @new_file_list = File::Find::Rule
-        ->file()
-        ->name($self->name)
-        ->in($self->in);
+    my @new_file_list = 
+        map {$pwd.'/'.$_}
+            File::Find::Rule
+            ->file()
+            ->name($self->name)
+            ->in($self->in);
     my @new_files = grep { not exists $$w_list{$_} } @new_file_list;
     my @changes = $self->monitor->scan;
     my @deleted_files = 
@@ -99,7 +104,7 @@ File::Monitor::Lite - Perl extension for blah blah blah
   use File::Monitor::Lite;
   
   my $monitor = new File::Monitor::Lite({
-      dir => '.',
+      in => '.',
       name => '*.html',
   })
 
@@ -109,14 +114,12 @@ File::Monitor::Lite - Perl extension for blah blah blah
       my @created_files = $monitor->created;
       my @observing_files = $monitor->observed;
   }
+  # some returning array is relative path, 
+  # and some are absolute path :(
 
 =head1 DESCRIPTION
 
-Stub documentation for File::Monitor::Lite, created by h2xs. It looks like the
-author of the extension was negligent enough to leave the stub
-unedited.
-
-Blah blah blah.
+This is another implementaion of File::Monitor. While File::Monitor cannot detect file creation, I use File::Find::Rule to rescan files every time when $monitor->check() is executed. To use this module, just follow synopsis above.
 
 =head2 EXPORT
 
@@ -126,18 +129,11 @@ None by default.
 
 =head1 SEE ALSO
 
-Mention other useful documentation such as the documentation of
-related modules or operating system documentation (such as man pages
-in UNIX), or any relevant external documentation such as RFCs or
-standards.
-
-If you have a mailing list set up for your module, mention it here.
-
-If you have a web site set up for your module, mention it here.
+L<File::Find::Rule>, L<File::Monitor>
 
 =head1 AUTHOR
 
-dryman, E<lt>dryman@apple.comE<gt>
+dryman, E<lt>idryman@gmail.comE<gt>
 
 =head1 COPYRIGHT AND LICENSE
 
