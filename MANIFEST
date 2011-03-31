@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/File-Monitor-Lite.t
+lib/File/Monitor/Lite.pm

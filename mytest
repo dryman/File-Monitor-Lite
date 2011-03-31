@@ -1,0 +1,14 @@
+#!/usr/bin/perl
+
+use lib  '/Users/dryman/projects/perl/File-Monitor-Lite/lib';
+use File::Monitor::Lite;
+
+$m = File::Monitor::Lite->new(
+        name => '*.pm',
+        in => '.' ,
+    );
+while (sleep 1 and $m->check){
+    print "$_ modified\n" for $m->modified;
+    print "$_ created\n" for $m->created;
+    print "$_ deleted\n" for $m->deleted;
+}
