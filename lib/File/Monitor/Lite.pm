@@ -119,13 +119,29 @@ File::Monitor::Lite - Perl extension for blah blah blah
 
 =head1 DESCRIPTION
 
-This is another implementaion of File::Monitor. While File::Monitor cannot detect file creation, I use File::Find::Rule to rescan files every time when $monitor->check() is executed. To use this module, just follow synopsis above.
+This is another implementaion of File::Monitor. While File::Monitor cannot detect file creation (unless you declare file name first), I use File::Find::Rule to rescan files every time when $monitor->check() is executed. To use this module, just follow synopsis above.
 
-=head2 EXPORT
+=head1 INTERFACE
 
-None by default.
+=over
 
+=item C< new ( args ) >
 
+Create a new C<File::Monitor::Lite> object. 
+    
+    my $monitor = File::Monitor::Lite->new(
+        in => '.',
+        name => '*.mp3',
+    );
+
+The syntax is inherited from L<File::Find::Rule>. It will applied on L<File::Find::Rule> as
+
+    File::Find::Rule
+        ->file()
+        ->name('*.mp3')
+        ->in('.');
+
+=back
 
 =head1 SEE ALSO
 
