@@ -63,7 +63,10 @@ sub check {
         $self->monitor->unwatch($_);
         delete $$w_list{$_};
     }
-    $self->monitor->scan;       # fix scan error 
+    $self->monitor->scan;       
+    # do a scan first before next check
+    # else next check $self->monitor cannot find differences
+
 
     $self->{watch_list}=($w_list);
     $self->{created}= [@new_files];
