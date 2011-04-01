@@ -103,10 +103,10 @@ File::Monitor::Lite - Perl extension for blah blah blah
 
   use File::Monitor::Lite;
   
-  my $monitor = new File::Monitor::Lite({
+  my $monitor = File::Monitor::Lite->new (
       in => '.',
       name => '*.html',
-  })
+  );
 
   while ($monitor->check() and sleep 1){
       my @deleted_files = $monitor->deleted;
@@ -114,12 +114,25 @@ File::Monitor::Lite - Perl extension for blah blah blah
       my @created_files = $monitor->created;
       my @observing_files = $monitor->observed;
   }
-  # some returning array is relative path, 
-  # and some are absolute path :(
 
 =head1 DESCRIPTION
 
 This is another implementaion of File::Monitor. While File::Monitor cannot detect file creation (unless you declare file name first), I use File::Find::Rule to rescan files every time when $monitor->check() is executed. To use this module, just follow synopsis above.
+
+Currently one cannot change file observing rules. To do so, create another monitor object with new rules.
+
+    $m1=File::Monitor::Lite->new(
+        name => '*.html',
+        in => '.',
+    );
+    $m1->check();
+    #blah...
+    $m2=File::Monitor::Lite->new(
+        name => '*.css',
+        in => '.',
+    );
+    $m2->check();
+    #blah...
 
 =head1 INTERFACE
 
@@ -140,6 +153,28 @@ The syntax is inherited from L<File::Find::Rule>. It will applied on L<File::Fin
         ->file()
         ->name('*.mp3')
         ->in('.');
+
+=item C< check() >
+
+Check if any file recognized by File::Find::Rule has changed (created, modified, deleted.) The usage is simple:
+
+    $monitor->check();
+
+=item C< created >
+
+Returns an array of file names which has been created since last check.
+
+=item C< modified >
+
+Returns an array of file names which has been modified since last check.
+
+=item C< deleted >
+
+Returns an array of file names which has been deleted since last check.
+
+=item C< observed >
+
+Returns an array of file names which monitor is observing at.
 
 =back
 
