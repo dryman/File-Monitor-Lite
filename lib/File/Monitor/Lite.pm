@@ -154,6 +154,13 @@ The syntax is inherited from L<File::Find::Rule>. It will applied on L<File::Fin
         ->name('*.mp3')
         ->in('.');
 
+As described in L<File::Find::Rule>, name can be globs or regular expressions.
+
+    name => '*.pm',                     # a simple glob
+    name => qr/.+\.pm$/,                # regex
+    name => ['*.mp3', qr/.+\.ogg$/],    # array of rules
+    name => @rules,
+
 =item C< check() >
 
 Check if any file recognized by File::Find::Rule has changed (created, modified, deleted.) The usage is simple:
