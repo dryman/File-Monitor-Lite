@@ -63,8 +63,12 @@ sub check {
         $self->monitor->unwatch($_);
         delete $$w_list{$_};
     }
-    $self->watch_list($w_list);
+    $self->monitor->scan;       
+    # do a scan first before next check
+    # else next check $self->monitor cannot find differences
 
+
+    $self->{watch_list}=($w_list);
     $self->{created}= [@new_files];
     $self->{modified}=[@modified_files];
     $self->{observed}=[ keys %$w_list];
@@ -74,7 +78,8 @@ sub check {
 }
 sub created {
     my $self = shift;
-    return @{$self->{created}}
+    #return () unless @{$self->{created}};
+    return @{$self->{created}};
 }
 sub modified {
     my $self = shift;
