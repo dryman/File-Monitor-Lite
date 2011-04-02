@@ -3,47 +3,57 @@ package File::Monitor::Lite;
 use 5.010000;
 use strict;
 use warnings;
+use File::Spec;
 use File::Find::Rule;
 use File::Monitor;
-use Cwd;
 use base 'Class::Accessor::Fast';
 __PACKAGE__->mk_accessors( 
 qw(
    monitor 
    watch_list
-   in
-   name
 ));
 	
-our $VERSION = '0.50';
+our $VERSION = '0.60';
 
 sub new {
     my $class = shift;
     my $self = {@_};
     bless $self, $class;
-    my $pwd=getcwd;
-    my %w_list = 
-        map{$pwd.'/'.$_ => 1}
-        File::Find::Rule
-            ->file()
-            ->name($self->name)
-            ->in($self->in);
-    $self->watch_list(\%w_list);
-    $self->monitor(new File::Monitor);
-    $self->monitor->watch($_)for keys %w_list;
+    $self->_init;
     return $self;
 }
 
+sub _init{
+    my $self = shift;
+    -d $self->{in} or die "invalid director\n";
+    $self->{in}=File::Spec->rel2abs($self->{in});
+    my %w_list = 
+        map{$_ => 1}
+        File::Find::Rule
+            ->file()
+            ->name($self->{name})
+            ->in($self->{in});
+    $self->watch_list(\%w_list);
+    $self->monitor(new File::Monitor);
+    $self->monitor->watch($_)for keys %w_list;
+    $self->monitor->scan;
+    $self->{observed}=[keys %w_list];
+    $self->{created}=[];
+    $self->{deleted}=[];
+    $self->{modified}=[];
+    1;
+}
+
+
+
 sub check {
     my $self = shift;
-    my $pwd=getcwd;
     my $w_list=$self->watch_list;
     my @new_file_list = 
-        map {$pwd.'/'.$_}
-            File::Find::Rule
-            ->file()
-            ->name($self->name)
-            ->in($self->in);
+        File::Find::Rule
+        ->file()
+        ->name($self->{name})
+        ->in($self->{in});
     my @new_files = grep { not exists $$w_list{$_} } @new_file_list;
     my @changes = $self->monitor->scan;
     my @deleted_files = 
