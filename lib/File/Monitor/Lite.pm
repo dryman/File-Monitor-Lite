@@ -1,6 +1,6 @@
 package File::Monitor::Lite;
 
-use 5.010000;
+use 5.8.6;
 use strict;
 use warnings;
 use File::Spec;
@@ -13,7 +13,7 @@ qw(
    watch_list
 ));
 	
-our $VERSION = '0.60';
+our $VERSION = '0.65';
 
 sub new {
     my $class = shift;
