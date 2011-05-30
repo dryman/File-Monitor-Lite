@@ -4,7 +4,7 @@ use File::Touch;
 use File::Spec::Functions ':ALL';
 use lib 'lib';
 
-`rm *.test`;
+unlink glob '*.test';
 my $m = File::Monitor::Lite->new( name => ['*.test'], in => '.',);
 
 note 'create t1.test';
@@ -29,7 +29,7 @@ is_deeply [sort $m->observed], [rel2abs('t1.test'), rel2abs('t2.test'), rel2abs(
 
 
 note 'delete t2.test t3.test';
-`rm t2.test t3.test`;
+unlink 't2.test','t3.test';
 ok $m->check, 'check done';
 is_deeply [$m->created], [], 'nothing created';
 is_deeply [sort $m->deleted], [rel2abs('t2.test'),rel2abs('t3.test')] , 't.test deleted';
@@ -37,7 +37,7 @@ is_deeply [$m->modified], [] , 'nothing modified';
 is_deeply [$m->observed], [rel2abs('t1.test')], 'observing nothing';
 
 note 'delete t1.test';
-`rm t1.test`;
+unlink 't1.test';
 ok $m->check, 'check done';
 is_deeply [$m->created], [], 'nothing created';
 is_deeply [$m->deleted], [rel2abs('t1.test')] , 't.test deleted';
