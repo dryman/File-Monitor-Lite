@@ -17,7 +17,9 @@ is_deeply [$m->modified], [] , 'nothing modified';
 is_deeply [$m->observed], [rel2abs('t.test')], 'observing t.test';
 
 note 'modify t.test';
-`echo 'again' >> t.test`;
+open FILE, '>t.test';
+print FILE 'testing...';
+close FILE;
 ok $m->check, 'check done';
 is_deeply [$m->created], [], 'nothing created';
 is_deeply [$m->deleted], [] , 'nothing deleted';

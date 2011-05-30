@@ -19,7 +19,9 @@ is_deeply [$m->observed], [rel2abs('t1.test')], 'observing t1.test';
 note 'create t2.test, t3.test; modify t1.test';
 touch 't2.test';
 touch 't3.test';
-`echo 'again' >> t1.test`;
+open FILE, '>t1.test';
+print FILE 'testing';
+close FILE;
 
 ok $m->check, 'check done';
 is_deeply [$m->created], [rel2abs('t2.test'), rel2abs('t3.test')], 't.test created';
