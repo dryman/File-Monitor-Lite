@@ -3,7 +3,7 @@ package File::Monitor::Lite;
 use 5.8.6;
 use strict;
 use warnings;
-use File::Spec;
+use File::Spec::Functions ':ALL';
 use File::Find::Rule;
 use File::Monitor;
 use base 'Class::Accessor::Fast';
@@ -13,7 +13,7 @@ qw(
    watch_list
 ));
 	
-our $VERSION = '0.652';
+our $VERSION = '0.652001';
 
 sub new {
     my $class = shift;
@@ -26,7 +26,7 @@ sub new {
 sub _init{
     my $self = shift;
     -d $self->{in} or die "invalid director\n";
-    $self->{in}=File::Spec->rel2abs($self->{in});
+    $self->{in}=rel2abs($self->{in});
     my %w_list = 
         map{$_ => 1}
         File::Find::Rule
@@ -83,6 +83,10 @@ sub check {
     $self->{modified}=[@modified_files];
     $self->{observed}=[ keys %$w_list];
     $self->{deleted}= [@deleted_files];
+    $self->{anychange}= (
+      scalar(@new_files)+
+      scalar(@modified_files)+
+      scalar(@deleted_files)) ? 1 : 0;
 
     1;
 }
@@ -102,6 +106,10 @@ sub observed {
 sub deleted {
     my $self = shift;
     return @{$self->{deleted}};
+}
+sub anychange{
+    my $self = shift;
+    return $self->{anychange};
 }
 
 # Preloaded methods go here.
@@ -128,7 +136,9 @@ File::Monitor::Lite - Monitor file changes
       my @modified_files = $monitor->modified;
       my @created_files = $monitor->created;
       my @observing_files = $monitor->observed;
+      `do blah..` if $monitor->anychange;
   }
+
 
 =head1 DESCRIPTION
 
