@@ -12,6 +12,7 @@ WriteMakefile(
     PREREQ_PM         => {
       "File::Monitor" => 0,
       "File::Find::Rule" => 0,
+      "File::Touch" => 0,
       "File::Spec::Functions" => 0,
       "Class::Accessor::Fast" => 0,
     }

@@ -2,5 +2,7 @@ Changes
 Makefile.PL
 MANIFEST
 README.mkd
-t/File-Monitor-Lite.t
+t/01use.t
+t/02behavior.t
+t/03abspath.t
 lib/File/Monitor/Lite.pm
