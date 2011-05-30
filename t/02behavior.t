@@ -4,7 +4,7 @@ use File::Touch;
 use File::Spec::Functions ':ALL';
 use lib 'lib';
 
-`rm t.test` if -f 't.test';
+`rm *.test`;
 my $m = File::Monitor::Lite->new( name => ['*.test'], in => '.',);
 
 note 'create t.test';
